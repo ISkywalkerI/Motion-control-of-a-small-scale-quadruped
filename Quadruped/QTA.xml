@@ -1,0 +1,180 @@
+<mujoco model="Quadruped">
+  <compiler angle="radian" meshdir="./meshes/" autolimits="true"/>
+  <option timestep="0.001" integrator="implicit" />
+
+  <asset>
+    <texture name="grid" type="2d" builtin="checker" width="512" height="512" rgb1=".1 .2 .3" rgb2=".2 .3 .4"/>
+    <material name="grid" texture="grid" texrepeat="1 1" texuniform="true" reflectance=".1"/>
+
+    <texture type="skybox" builtin="gradient" width="512" height="512" rgb1="0.3 0.5 0.7" rgb2="0 0 0"/>
+   
+
+
+    <mesh name="base_link" file="base_link.STL"/>
+    <mesh name="Lf1_Link" file="Lf1_Link.STL"/>
+    <mesh name="Lf2_Link" file="Lf2_Link.STL"/>
+    <mesh name="Lf3_Link" file="Lf3_Link.STL"/>
+    <mesh name="Rf1_Link" file="Rf1_Link.STL"/>
+    <mesh name="Rf2_Link" file="Rf2_Link.STL"/>
+    <mesh name="Rf3_Link" file="Rf3_Link.STL"/>
+    <mesh name="Lb1_Link" file="Lb1_Link.STL"/>
+    <mesh name="Lb2_Link" file="Lb2_Link.STL"/>
+    <mesh name="Lb3_Link" file="Lb3_Link.STL"/>
+    <mesh name="Rb1_Link" file="Rb1_Link.STL"/>
+    <mesh name="Rb2_Link" file="Rb2_Link.STL"/>
+    <mesh name="Rb3_Link" file="Rb3_Link.STL"/>
+  </asset>
+
+  <default>
+    <default class = "Quadruped">
+      <joint damping="0.01" armature="0.01" />
+      <position kp="10" kv="0.5" />
+
+        <default class = "left">
+        <joint range = "-0.8 0.4" />
+        <position ctrlrange="-0.8 0.4" />
+        </default>
+
+        <default class = "right">
+        <joint range = "-0.4 0.8" />
+        <position ctrlrange="-0.4 0.8" />
+        </default>
+
+
+        <default class="joint_l2">
+          <joint range="-1.2 0"/>
+          <position ctrlrange="-1.2 0"/>
+          <default class="joint_l3">
+            <joint range="-0.8 0.4"/>
+            <position ctrlrange="-0.8 0.4"/>
+          </default>
+        </default>
+
+    
+    </default>
+  </default>
+
+  <worldbody>
+    <!-- <light name="top light" pos="0 0 2" mode="trackcom" diffuse=".4 .4 .4"/> -->
+    <light directional="true" diffuse=".8 .8 .8" pos="0 0 10" dir="0 0 -10"/>
+    <!-- <geom type="plane" pos=" 0 0 -0.2" size="3 3 .01" material="grid"/> -->
+    <geom name="floor" pos="0 0 0" euler="0 0 0" size="0 0 1" type="plane" material="grid" condim="3" conaffinity="1" contype="1" rgba="1 1 1 1"/> 
+    <body name = "base_link" pos = "0 0 0.2" childclass = "Quadruped">
+      <geom type="mesh" rgba="1 1 1 1" mesh="base_link"/>
+      <joint type="free"/>
+      <site name="imu" pos="0 0 0"/>
+      <body name="Lf1_Link" pos="0.00595 0.03 -0.028">
+        <inertial pos="0.033547 -0.0066734 0.00069989" quat="0.416078 0.560186 0.419343 0.580709" mass="0.012373" diaginertia="1.01531e-06 9.16035e-07 4.2744e-07"/>
+        <joint name="servo1" class = "left" axis="-1 0 0" />
+        <geom type="mesh" rgba="1 1 1 1" mesh="Lf1_Link"/>
+        <site name="Lf1_joint_site" pos="0 0 0"/>
+        <body name="Lf2_Link" pos="0.0388 0.00585 0" quat="-0.396306 0 -0.918118 0">
+          <inertial pos="0.0310193 0.0232306 -0.00116471" quat="0.519404 0.482767 0.482331 0.514308" mass="0.0130443" diaginertia="2.66601e-06 2.53189e-06 2.87379e-07"/>
+          <joint name="servo2" class="joint_l2" axis="0 1 0" />
+          <geom type="mesh" rgba="1 1 1 1" mesh="Lf2_Link"/>
+          <site name="Lf2_joint_site" pos="0 0 0"/>
+          <body name="Lf3_Link" pos="0.0728907 0.01265 0.00399401" quat="-0.605673 0 0.795714 0">
+            <inertial pos="0.0274336 -0.00213708 0.00217692" quat="0.513179 0.486464 0.486464 0.513179" mass="0.00170995" diaginertia="8.32497e-07 8.22291e-07 1.3708e-08"/>
+            <joint name="servo3" class="joint_l3" axis="0 -1 0" />
+            <geom type="mesh" rgba="1 1 1 1" mesh="Lf3_Link"/>
+            <site name="Lf3_foot" pos="0.061 -0.002 0.004" size="0.002" rgba="1 0 0 1"/>
+          </body>
+        </body>
+      </body>
+
+     <body name="Rf1_Link" pos="0.00595 -0.03 -0.028">
+       <inertial pos="0.033547 0.00667341 0.000654999" quat="0.581273 0.419688 0.556407 0.419995" mass="0.0123731" diaginertia="1.0147e-06 9.16775e-07 4.27273e-07"/>
+       <joint name="servo4" class = "right" axis="-1 0 0" />
+       <geom type="mesh" rgba="1 1 1 1" mesh="Rf1_Link"/>
+       <site name="Rf1_joint_site" pos="0 0 0"/>
+       <body name="Rf2_Link" pos="0.0388 -0.00585 0" quat="0.396306 0 0.918118 0">
+          <inertial pos="0.0310188 -0.0232306 -0.00115494" quat="0.514138 0.482502 0.482793 0.519388" mass="0.0130443" diaginertia="2.66601e-06 2.53186e-06 2.87405e-07"/>
+          <joint name="servo5" class="joint_l2" axis="0 1 0" />
+          <geom type="mesh" rgba="1 1 1 1" mesh="Rf2_Link"/>
+          <site name="Rf2_joint_site" pos="0 0 0"/>
+          <body name="Rf3_Link" pos="0.0728907 -0.01265 0.00399401" quat="0.605673 0 -0.795714 0">
+            <inertial pos="0.0274336 0.00213708 0.00217692" quat="0.513179 0.486464 0.486464 0.513179" mass="0.00170995" diaginertia="8.32497e-07 8.22291e-07 1.3708e-08"/>
+            <joint name="servo6" class="joint_l3" axis="0 -1 0" />
+            <geom type="mesh" rgba="1 1 1 1" mesh="Rf3_Link"/>
+            <site name="Rf3_foot" pos="0.061 0.002 0.004" size="0.002" rgba="1 0 0 1"/>
+          </body>
+       </body>
+     </body>
+
+     <body name="Lb1_Link" pos="-0.05895 0.03 -0.028">
+       <inertial pos="-0.033547 -0.0066734 0.000655" quat="0.427347 0.57547 0.427997 0.55048" mass="0.012373" diaginertia="1.01365e-06 9.17801e-07 4.27274e-07"/>
+       <joint name="servo7" class = "left" axis="1 0 0" />
+       <geom type="mesh" rgba="1 1 1 1" mesh="Lb1_Link"/>
+       <site name="Lb1_joint_site" pos="0 0 0"/>
+       <body name="Lb2_Link" pos="-0.0388 0.00585 0" quat="0.396306 0 0.918118 0">
+          <inertial pos="0.0310193 0.0232306 -0.00116471" quat="0.519404 0.482767 0.482331 0.514308" mass="0.0130443" diaginertia="2.66601e-06 2.53189e-06 2.87379e-07"/>
+          <joint name="servo8" class="joint_l2" axis="0 1 0" />
+          <geom type="mesh" rgba="1 1 1 1" mesh="Lb2_Link"/>
+          <site name="Lb2_joint_site" pos="0 0 0"/>
+          <body name="Lb3_Link" pos="0.0728907 0.01265 0.00399401" quat="0.605673 0 -0.795714 0">
+            <inertial pos="0.0274336 -0.00213708 0.00217692" quat="0.513179 0.486464 0.486464 0.513179" mass="0.00170995" diaginertia="8.32497e-07 8.22291e-07 1.3708e-08"/>
+            <joint name="servo9" class="joint_l3" axis="0 -1 0" />
+            <geom type="mesh" rgba="1 1 1 1" mesh="Lb3_Link"/>
+            <site name="Lb3_foot" pos="0.061 -0.002 0.004" size="0.002" rgba="1 0 0 1"/>
+          </body>
+       </body>
+     </body>
+
+     <body name="Rb1_Link" pos="-0.05895 -0.03 -0.028">
+       <inertial pos="-0.033547 0.0066734 0.00069989" quat="0.560285 0.415942 0.580805 0.419211" mass="0.012373" diaginertia="1.01535e-06 9.16002e-07 4.2744e-07"/>
+       <joint name="servo10" class = "right" axis="1 0 0" />
+       <geom type="mesh" rgba="1 1 1 1" mesh="Rb1_Link"/>
+       <site name="Rb1_joint_site" pos="0 0 0"/>
+       <body name="Rb2_Link" pos="-0.0388 -0.00585 0" quat="0.396306 0 0.918118 0">
+         <inertial pos="0.031019 -0.023231 -0.0011549" quat="0.514138 0.482502 0.482793 0.519389" mass="0.013044" diaginertia="2.66597e-06 2.53184e-06 2.874e-07"/>
+         <joint name="servo11" class="joint_l2" axis="0 1 0" />
+         <geom type="mesh" rgba="1 1 1 1" mesh="Rb2_Link"/>
+         <site name="Rb2_joint_site" pos="0 0 0"/>
+         <body name="Rb3_Link" pos="0.0728907 -0.01265 0.00399401" quat="-0.605673 0 0.795714 0">
+           <inertial pos="0.027434 0.0021371 0.0021769" quat="0.51318 0.486464 0.486464 0.51318" mass="0.0017099" diaginertia="8.325e-07 8.22287e-07 1.37082e-08"/>
+           <joint name="servo12" class="joint_l3" axis="0 -1 0" />
+           <geom type="mesh" rgba="1 1 1 1" mesh="Rb3_Link"/>
+           <site name="Rb3_foot" pos="0.061 0.002 0.004" size="0.002" rgba="1 0 0 1"/>
+         </body>
+       </body>
+     </body>
+    </body>
+  </worldbody>
+
+
+  <actuator>
+    <position class = "left" name="lf1" joint="servo1"/>
+    <position class="joint_l2" name="lf2" joint="servo2"/>
+    <position class="joint_l3" name="lf3" joint="servo3"/>
+    <position class = "right" name="rf1" joint="servo4"/>
+    <position class="joint_l2" name="rf2" joint="servo5"/>
+    <position class="joint_l3" name="rf3" joint="servo6"/>
+    <position class = "left" name="lb1" joint="servo7"/>
+    <position class="joint_l2" name="lb2" joint="servo8"/>
+    <position class="joint_l3" name="lb3" joint="servo9"/>
+    <position class = "right" name="rb1" joint="servo10"/>
+    <position class="joint_l2" name="rb2" joint="servo11"/>
+    <position class="joint_l3" name="rb3" joint="servo12"/>
+  </actuator>
+
+  <sensor>
+    <framequat name="Body_Quat" objtype="site" objname="imu"/>
+    <gyro name="Body_Gyro" site="imu"/>
+    <accelerometer name="Body_Acc" site="imu"/>
+
+    <jointpos name="Lf1" joint="servo1"/>
+    <jointpos name="Lf2" joint="servo2"/>
+    <jointpos name="Lf3" joint="servo3"/>
+    <jointpos name="Rf1" joint="servo4"/>
+    <jointpos name="Rf2" joint="servo5"/>
+    <jointpos name="Rf3" joint="servo6"/>
+    <jointpos name="Lb1" joint="servo7"/>
+    <jointpos name="Lb2" joint="servo8"/>
+    <jointpos name="Lb3" joint="servo9"/>
+    <jointpos name="Rb1" joint="servo10"/>
+    <jointpos name="Rb2" joint="servo11"/>
+    <jointpos name="Rb3" joint="servo12"/>
+  </sensor>
+</mujoco>
+
+
