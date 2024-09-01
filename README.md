@@ -1,3 +1,5 @@
+11378744 Project 
+
 Run the walk1.py to watch the walk gait pattern simulation of the robot.
 
 change 
