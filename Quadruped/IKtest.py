@@ -74,14 +74,14 @@ def set_joint_angles_with_actuators(clock):
     global t
     xf, xs = 0.04, 0.0
     zs = -0.10
-    height = 0.03
-    Ts = 3
+    height = 0.02
+    Ts = 2.5
 
     lf3_foot_pos = data.site("Lf3_foot").xpos
-    lf1_joint_site_pos = data.site("Lf1_joint_site").xpos
+    lf1_joint_site_pos = data.site("Lf2_joint_site").xpos
 
     # Calculate relative position
-    x_rel = lf3_foot_pos[0] - lf1_joint_site_pos[0] - 0.04
+    x_rel = lf3_foot_pos[0] - lf1_joint_site_pos[0]
     z_rel = lf3_foot_pos[2] - lf1_joint_site_pos[2]
 
     # Get the gait trajectory
@@ -141,7 +141,7 @@ def main():
 
     plot_relative_and_gait_trajectory(x_rel_traj, z_rel_traj, x_gait_traj, z_gait_traj)
 
-    plot_difference_trajectory(x_diff_traj, z_diff_traj)
+    #plot_difference_trajectory(x_diff_traj, z_diff_traj)
 
 if __name__ == "__main__":
     main()
