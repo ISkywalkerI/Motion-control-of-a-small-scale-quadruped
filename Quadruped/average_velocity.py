@@ -32,6 +32,10 @@ t=0
 x_traj = []
 y_traj = []
 z_traj = []
+Ts = 1.4
+sensor_vel_x = []
+sensor_vel_y = []
+sensor_vel_z = []
 def initialpos():
     x = [0.0, 0.0, 0.0, 0.0]
     y = [0.0, 0.0, 0.0, 0.0]
@@ -48,7 +52,7 @@ def plot_trajectory(x_traj, y_traj, z_traj, mode='3d'):
         ax = fig.add_subplot(111, projection='3d')
         ax.plot(x_traj, y_traj, z_traj, label='Robot Trajectory')
         ax.set_xlabel('X (m)')
-        ax.set_xticks([0, 0.2, 0.4, 0.6, 0.8, 1])
+        #ax.set_xticks([0, 0.2, 0.4, 0.6, 0.8, 1])
         ax.set_ylabel('Y (m)')
         ax.set_yticks([-0.4, -0.2, 0, 0.2, 0.4])
         ax.set_zlabel('Z (m)')
@@ -68,6 +72,15 @@ def plot_trajectory(x_traj, y_traj, z_traj, mode='3d'):
     plt.savefig(output_path)
     print(f"Trajectory plot saved as {output_path}")
 
+def calculate_and_print_average_velocity(sensor_vel_x, sensor_vel_y, sensor_vel_z):
+    avg_vel_x = np.mean(sensor_vel_x)/5
+    avg_vel_y = np.mean(sensor_vel_y)
+    avg_vel_z = np.mean(sensor_vel_z)
+    global Ts
+    print(f"T: {Ts}   Average Velocity X: {avg_vel_x:.4f} m/s")
+    #print(f"Average Velocity Y: {avg_vel_y:.4f} m/s")
+    #print(f"Average Velocity Z: {avg_vel_z:.4f} m/s")
+
 def set_joint_angles_with_actuators(clock):
 
 
@@ -78,16 +91,24 @@ def set_joint_angles_with_actuators(clock):
     yf, ys = 0.0, 0.0
     zs = -0.100
     height = 0.02
-    Ts = 2.5
+    global Ts
     if clock > 10:
         x_traj.append(data.body("base_link").xpos[0])  # X 坐标
         y_traj.append(data.body("base_link").xpos[1])  # Y 坐标
         z_traj.append(data.body("base_link").xpos[2])  # Z 坐标
 
+    if clock > 20 and clock < 50:
+
+
+        velocimeter_start_index = model.sensor("Body_velo").adr
+        sensor_vel_x.append(data.sensordata[velocimeter_start_index])
+        sensor_vel_y.append(data.sensordata[velocimeter_start_index + 1])
+        sensor_vel_z.append(data.sensordata[velocimeter_start_index + 2])
+
     #x,y,z = gait.walkt(t,x_target,z_target)
-    x,y,z = gait.trot(xf, xs, yf, ys, zs, height, t, Ts,-0.06)
+    #x,y,z = gait.trot(xf, xs, yf, ys, zs, height, t, Ts,0.0)
     #x,y,z = gait.walktest(xf, xs, yf, ys, zs, height, t, Ts)
-    #x,y,z = gait.walk_rotate(xf, xs, yf, ys, zs, height, t, Ts, 0.5)
+    x,y,z = gait.walk_rotate(xf, xs, yf, ys, zs, height, t, Ts, 0)
     print(x,y,z)
 
     t = t + 0.01
@@ -124,7 +145,7 @@ def main():
         clock = clock + 0.01
         print (f"clock {clock}")
         if not paused:
-            if clock > 5:
+            if clock > 3:
                 set_joint_angles_with_actuators(clock)
 
             
@@ -133,7 +154,7 @@ def main():
 
     plot_mode = '3d'
     plot_trajectory(x_traj, y_traj, z_traj, mode=plot_mode)
-
+    calculate_and_print_average_velocity(sensor_vel_x, sensor_vel_y, sensor_vel_z)
     
 
 
