@@ -28,7 +28,7 @@
   <default>
     <default class = "Quadruped">
       <joint damping="0.01" armature="0.01" />
-      <position kp="10" kv="0.5" />
+      <position kp="20" kv="0.5" />
 
         <default class = "left">
         <joint range = "-0.8 0.4" />
